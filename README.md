@@ -224,7 +224,9 @@ Open the application in your browser:
 
 http://localhost:4200
 
-Adjust the commands and directory names to match the actual repository structure.
+If everything is properly configured, on first login, authenticate using Keycloak. After logging in, the following page will appear:
+
+<img width="1504" height="657" alt="image" src="https://github.com/user-attachments/assets/5b8860ea-696f-440f-9a4f-7fd437879bec" />
 
 ## 🧪 Testing
 
