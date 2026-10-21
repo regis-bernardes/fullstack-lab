@@ -2,7 +2,7 @@ spring:
   application:
     name: execucao-sql-engine
   datasource:
-    url: jdbc:postgresql://localhost:55432/db_controle_execucao
+    url: jdbc:postgresql://localhost:55432/fullstack_lab
     username: postgres
     password: postgres
   jpa:
