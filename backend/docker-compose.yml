@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Banco de Dados de Controle (PostgreSQL 17)
+  postgres-controle:
+    image: postgres:17-alpine
+    container_name: postgres_controle
+    environment:
+      POSTGRES_DB: db_controle_execucao
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "55432:5432"
+    volumes:
+      - pgdata_controle:/var/lib/postgresql/data
+    networks:
+      - network-sql-engine
+
+  # Keycloak para Autenticação e Gestão de Identidade
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.0
+    container_name: keycloak_server
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin     	  
+# KC_HTTP_PORT: 8080
+    command: start-dev
+    ports:
+      - "8180:8080"
+    networks:
+      - network-sql-engine
+
+volumes:
+  pgdata_controle:
+
+networks:
+  network-sql-engine:
+    driver: bridge

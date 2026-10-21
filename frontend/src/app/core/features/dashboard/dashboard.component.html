@@ -1,0 +1,127 @@
+<div class="p-8 max-w-7xl mx-auto font-sans bg-gray-50 min-h-screen">
+  <header class="mb-8 flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Monitor Queries SQL - Dashboard</h1>
+      <p class="text-sm text-gray-500">Gestão de Servidores SGBD e Execuções em Tempo Real</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="inline-block w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+      <span class="text-sm font-medium text-gray-600">WebSocket Ativo</span>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Coluna Esquerda: Gestão de Servidores & Disparo SQL -->
+    <div class="lg:col-span-1 space-y-8">
+      
+      <!-- Secção de Servidores -->
+      <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center justify-between">
+          <span>Servidores</span>
+          <span class="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-medium">{{ servidores.length }} Ativos</span>
+        </h2>
+        <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
+
+          @for (srv of servidores; track srv.idServidor) {
+            <div class="p-3 border border-gray-100 rounded-lg bg-gray-50 flex justify-between items-center hover:bg-gray-100 transition-colors">
+              <div>
+                <h3 class="font-medium text-gray-800 text-sm">{{ srv.nomeServidor }}</h3>
+                <p class="text-xs text-gray-500">{{ srv.host }}:{{ srv.porta }} ({{ srv.tipo }})</p>
+              </div>
+              <span class="text-xs px-2 py-0.5 rounded font-semibold" [ngClass]="srv.ativo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                {{ srv.ativo ? 'Online' : 'Offline' }}
+              </span>
+            </div>
+          } @empty {
+            <p class="text-sm text-gray-400 text-center py-4">Nenhum servidor registado.</p>
+          }
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Coluna Direita: Histórico e Acompanhamento em Tempo Real -->
+    <div class="lg:col-span-2 space-y-8">
+      <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center justify-between">
+          <span>Histórico de Execuções & Tempo Real</span>
+          <button (click)="carregarExecucoes()" class="text-xs text-blue-600 hover:underline font-medium">Atualizar</button>
+        </h2>
+
+
+<div class="overflow-x-auto bg-white rounded-lg shadow border border-gray-100">
+  <table class="min-w-full divide-y divide-gray-200 text-sm">
+    <thead class="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
+      <tr>
+        <th class="px-6 py-3 text-left">Apelido</th>
+        <th class="px-6 py-3 text-left">Servidor</th>
+        <th class="px-6 py-3 text-left">Status</th>
+        <th class="px-6 py-3 text-left">Tipo de Execução</th>
+        <th class="px-6 py-3 text-left">Conteúdo</th>
+        <th class="px-6 py-3 text-left">Data/Hora</th>
+        <th class="px-6 py-3 text-center">Ações</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+      
+      <!-- Bloco @for moderno do Angular -->
+      @for (exec of execucoes; track exec.idExecucao) {
+        <tr class="hover:bg-gray-50 transition-colors">
+          
+          <!-- ID / Servidor -->
+          <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+            {{ exec.apelido }}
+          </td>
+          
+          <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+            {{ exec.servidor?.nomeServidor }}
+          </td>
+
+          <!-- Status -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="text-xs px-2.5 py-1 rounded-full font-semibold" [ngClass]="{
+              'bg-yellow-100 text-yellow-800': exec.status === 'EM_ANDAMENTO',
+              'bg-green-100 text-green-800': exec.status === 'CONCLUIDO',
+              'bg-red-100 text-red-800': exec.status === 'ERRO',
+              'bg-gray-200 text-gray-700': exec.status === 'CANCELADO'
+            }">
+              {{ exec.status }}
+            </span>
+          </td>
+
+          <!-- Tipo de Execução -->
+          <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+            {{ exec.tipoExecucao }}
+          </td>
+
+          <!-- Conteúdo -->
+          <td class="px-6 py-4 whitespace-nowrap text-gray-700 max-w-xs truncate" [title]="exec.conteudo">
+            <code class="bg-gray-100 px-2 py-1 rounded text-xs text-gray-800">{{ exec.conteudo.substr(0,30) }}</code>
+          </td>
+
+          <!-- Data/Hora -->
+          <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">
+            {{ exec.dtInicio | date:'short' }}
+          </td>
+
+          <!-- Ações -->
+          <td class="px-6 py-4 whitespace-nowrap text-center">
+            <button (click)="abrirDetalhes(exec)" class="text-blue-600 hover:text-blue-900 font-medium">Detalhes</button>
+          </td>
+
+        </tr>
+      } @empty {
+        <!-- Caso a lista de execuções esteja vazia -->
+        <tr>
+          <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+            Nenhuma execução registada até o momento.
+          </td>
+        </tr>
+      }
+
+    </tbody>
+  </table>
+</div>
+
+<app-detalhe-execucao [execucaoSelecionada]="execucaoSelecionada" (fechar)="fecharDetalhes()" />
+

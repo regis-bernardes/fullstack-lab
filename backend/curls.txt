@@ -1,0 +1,87 @@
+--pegar token do keycloak
+curl -X POST "http://localhost:8180/realms/dbulinkedin-realm/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=sql-client" \
+  -d "username=admin.dbulinkedin" \
+  -d "password=admin" \
+  -d "grant_type=password"
+
+--gravar servidor sgbd  
+  curl -v -X POST http://localhost:8080/api/servidores \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJFNlRkMEtCQ0k3TEhSLVlXZU9UcllQV0c1MkpQZE9iMHV2ZVJIcFJURUpvIn0.eyJleHAiOjE3OTE5MzAyMzIsImlhdCI6MTc5MTkyOTkzMiwianRpIjoiN2M5ODlkZjUtOWYyOS00MzhlLWIzZTctMjE3MTliYTY1MTFjIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL3JlYWxtcy9kYnVsaW5rZWRpbi1yZWFsbSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI3NzQ3ODdiYy0zZDNlLTRjN2QtYjcwNS1lM2Q1M2Q2Yzg2MjUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzcWwtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6Ijg4OGZiZTUzLTlhY2QtNDBkMi05MzM2LTY4OGM4NmNiOTlkMiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtZGJ1bGlua2VkaW4tcmVhbG0iLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiODg4ZmJlNTMtOWFjZC00MGQyLTkzMzYtNjg4Yzg2Y2I5OWQyIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiYWRtaW4gdW9sIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4uZGJ1bGlua2VkaW4iLCJnaXZlbl9uYW1lIjoiYWRtaW4iLCJmYW1pbHlfbmFtZSI6InVvbCIsImVtYWlsIjoiYWRtaW5AdW9sLmNvbS5iciJ9.MT3EJLeIFAF3Xv5Clv6kg-kjhFs6FNBDQJhRnYWoA_E7XiwW3ow1YTKJ9YuSWB-swdcC6i3tNx9QDd9U-vgAyqvlpwn1VHR6DXDSKuWAatjcFChzls22g53tEOvEjB2SoUC-HQae5H7uu3iIRS8wRsqpW51G5fgUxIuTdDswcukNq8BEv12qTK8SWzgVw46nJ1CQ1NRM4H80hSIw1uFkyZuWuqL6ykOA-n4AI8Csa_2-wI-AH8oCo26f9dmMrRDcdaGM1eJ3TvaidK8Zx4TCEbXhgIm7lCq9HST_Rznt3nkM8PhWjmd7qTweWW1p2_jDO0XpqtJgglncd_ONdtTFwA" \
+  -d '{
+    "nomeServidor": "Postgres Producao",
+    "host": "localhost",
+    "porta": 5432,
+    "tipo": "POSTGRES",
+    "username": "postgres",
+    "senha": "mysecretpassword",
+    "ativo": true
+  }'
+
+--listar servidor sgbd
+curl -X GET "http://localhost:8080/api/servidores" -H "Authorization: Bearer $TOKEN"
+
+--obter servidor sgbd especifico
+curl -X GET http://localhost:8080/api/servidores/1 -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+--atualizar um servidor especifico
+curl -X PUT http://localhost:8080/api/servidores/1 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{
+    "nomeServidor": "Postgres Homologacao",
+    "host": "localhost",
+    "porta": 55432,
+    "tipo": "POSTGRES",
+    "username": "postgres",
+    "senha": "newpassword",
+    "ativo": true
+  }'
+  
+  --deletar servidor
+  curl -X DELETE http://localhost:8080/api/servidores/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  
+TOKEN=$(curl -s -X POST "http://localhost:8180/realms/dbulinkedin-realm/protocol/openid-connect/token" -d "client_id=sql-client" -d "username=admin.dbulinkedin" -d "password=admin" -d "grant_type=password" | jq -r '.access_token')
+
+# --- 1. SERVIDORES SGBD ---
+curl -X GET "http://localhost:8080/api/servidores" -H "Authorization: Bearer $TOKEN"
+curl -X GET "http://localhost:8080/api/servidores/1" -H "Authorization: Bearer $TOKEN"
+curl -X POST "http://localhost:8080/api/servidores" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"nomeServidor": "Postgres Producao", "host": "localhost", "porta": 5432, "tipo": "POSTGRES", "username": "postgres", "senha": "mysecretpassword", "ativo": true}'
+curl -X PUT "http://localhost:8080/api/servidores/1" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"nomeServidor": "Postgres Homologacao", "host": "localhost", "porta": 5432, "tipo": "POSTGRES", "username": "postgres", "senha": "newpassword", "ativo": true}'
+curl -X DELETE "http://localhost:8080/api/servidores/1" -H "Authorization: Bearer $TOKEN"
+
+# --- 2. UTILIZADORES ---
+curl -X GET "http://localhost:8080/api/usuarios" -H "Authorization: Bearer $TOKEN"
+curl -X GET "http://localhost:8080/api/usuarios/1" -H "Authorization: Bearer $TOKEN"
+curl -X POST "http://localhost:8080/api/usuarios" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"login": "joao.silva", "idKeycloak": "kc-uuid-abc-123"}'
+curl -X DELETE "http://localhost:8080/api/usuarios/1" -H "Authorization: Bearer $TOKEN"
+
+# --- 3. FUNCIONALIDADES ---
+curl -X GET "http://localhost:8080/api/funcionalidades" -H "Authorization: Bearer $TOKEN"
+curl -X POST "http://localhost:8080/api/funcionalidades" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"nome": "EXECUTAR_SQL"}'
+
+# --- 4. PERMISSÕES ---
+curl -X GET "http://localhost:8080/api/permissoes/usuario/1" -H "Authorization: Bearer $TOKEN"
+curl -X POST "http://localhost:8080/api/permissoes" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"idUsuario": 1, "idFuncionalidade": 1, "flagPodeAcessar": "S"}'
+
+# --- 5. EXECUÇÕES (Motor SQL) ---
+curl -X POST "http://localhost:8080/api/execucoes" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"apelido": "Teste Diario", "tipoExecucao": "QUERY", "idsServidores": [1], "conteudosSql": ["SELECT NOW();", "SELECT current_database();"]}'
+curl -X GET "http://localhost:8080/api/execucoes" -H "Authorization: Bearer $TOKEN"
+curl -X GET "http://localhost:8080/api/execucoes/1" -H "Authorization: Bearer $TOKEN"
+curl -X POST "http://localhost:8080/api/execucoes/1/cancelar" -H "Authorization: Bearer $TOKEN"
+  
+#-------------------------------------------------------------------------------------
+  
+# 1. Pega o token
+TOKEN=$(curl -s -X POST "http://localhost:8180/realms/dbulinkedin-realm/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=sql-client" \
+  -d "username=admin.dbulinkedin" \
+  -d "password=admin" \
+  -d "grant_type=password" | jq -r '.access_token')
+
+  curl -X DELETE http://localhost:8080/api/servidores/1 \
+  -H "Authorization: Bearer $TOKEN"

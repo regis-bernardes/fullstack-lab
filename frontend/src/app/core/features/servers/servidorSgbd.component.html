@@ -1,0 +1,157 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6">
+  
+  <!-- Cabeçalho da Página -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Gestão de Servidores SGBD</h1>
+      <p class="text-sm text-gray-500">Configure e gira as conexões às bases de dados para execução de queries.</p>
+    </div>
+    <button (click)="abrirFormularioNovo()" 
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow transition-colors flex items-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+      Novo Servidor
+    </button>
+  </div>
+
+  <!-- FORMULÁRIO DE CRIAÇÃO / EDIÇÃO -->
+  @if (exibirFormulario) {
+    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transition-all">
+      <div class="flex justify-between items-center mb-4 border-b pb-3">
+        <h2 class="text-lg font-semibold text-gray-800">
+          {{ modoEdicao ? 'Editar Servidor' : 'Registar Novo Servidor' }}
+        </h2>
+        <button (click)="fecharFormulario()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
+      </div>
+
+      <form (submit)="salvarServidor()" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Nome do Servidor</label>
+          <input type="text" [(ngModel)]="servidorAtual.nomeServidor" name="name" required
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: Produção PostgreSQL">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Tipo</label>
+          <select [(ngModel)]="servidorAtual.tipo" name="tipo" required
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+            <option value="POSTGRESQL">PostgreSQL</option>
+            <option value="MYSQL">MySQL</option>
+            <option value="ORACLE">Oracle</option>
+            <option value="SQLSERVER">SQL Server</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Nome da Base de Dados</label>
+          <input type="text" [(ngModel)]="servidorAtual.databaseName" name="databaseName" required
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: meu_banco">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Host/IP</label>
+          <input type="text" [(ngModel)]="servidorAtual.host" name="host" required
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: localhost">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Porta</label>
+          <input type="number" [(ngModel)]="servidorAtual.porta" name="port" required
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: 5432">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">DB UserName</label>
+          <input type="text" [(ngModel)]="servidorAtual.username" name="username" required
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: postgres">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Senha criptografada</label>
+          <input type="password" [(ngModel)]="servidorAtual.senhaCriptografada" name="password"
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Deixe em branco para manter">
+        </div>
+
+        <div class="md:col-span-2 flex justify-end items-end gap-2 mt-2">
+          <button type="button" (click)="fecharFormulario()" 
+                  class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            Cancelar
+          </button>
+          <button type="submit" 
+                  class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-medium shadow transition-colors">
+            Guardar Servidor
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- TABELA DE LISTAGEM COM PAGINAÇÃO -->
+  <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200 text-sm">
+      <thead class="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
+        <tr>
+          <th class="px-6 py-3 text-left">Nome</th>
+          <th class="px-6 py-3 text-left">SGBD</th>
+          <th class="px-6 py-3 text-left">Host : Porta</th>
+          <th class="px-6 py-3 text-left">Base de Dados</th>
+          <th class="px-6 py-3 text-left">Utilizador</th>
+          <th class="px-6 py-3 text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        
+        <!-- Itera apenas sobre os elementos paginados -->
+        @for (srv of servidores; track srv.idServidor) {
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-4 font-medium text-gray-900">{{ srv.nomeServidor }}</td>
+            <td class="px-6 py-4">
+              <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-semibold">
+                {{ srv.tipo }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-gray-600 font-mono text-xs">{{ srv.host }}:{{ srv.porta }}</td>
+            <td class="px-6 py-4 text-gray-700">{{ srv.databaseName }}</td>
+            <td class="px-6 py-4 text-gray-500">{{ srv.username }}</td>
+            <td class="px-6 py-4 text-center space-x-3">
+              <button (click)="prepararEdicao(srv)" class="text-indigo-600 hover:text-indigo-900 font-medium">Editar</button>
+              <button (click)="excluirServidor(srv.idServidor!)" class="text-red-600 hover:text-red-900 font-medium">Excluir</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="px-6 py-10 text-center text-gray-500">
+              Nenhum servidor registado. Clique em "Novo Servidor" para começar.
+            </td>
+          </tr>
+        }
+
+      </tbody>
+    </table>
+
+    <!-- BARRA DE PAGINAÇÃO -->
+    <div class="bg-white px-6 py-3 flex items-center justify-between border-t border-gray-200 text-sm">
+      <div class="text-gray-500">
+        Mostrando <span class="font-medium text-gray-700">{{ indiceInicial }}</span> a 
+        <span class="font-medium text-gray-700">{{ indiceFinal }}</span> de 
+        <span class="font-medium text-gray-700">{{ servidores.length }}</span> resultados
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button (click)="paginaAnterior()" [disabled]="paginaAtual === 1"
+                class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+          Anterior
+        </button>
+        
+        <span class="text-gray-700 font-medium px-2">
+          Página {{ paginaAtual }} de {{ totalPaginas || 1 }}
+        </span>
+
+        <button (click)="proximaPagina()" [disabled]="paginaAtual >= totalPaginas"
+                class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+          Seguinte
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

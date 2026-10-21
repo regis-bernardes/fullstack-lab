@@ -1,0 +1,45 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6">
+      <!-- Secção de Disparo de SQL -->
+      <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Executar Bloco SQL</h2>
+        <form [formGroup]="sqlForm" (ngSubmit)="dispararSql()" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Apelido / Descrição</label>
+              <input type="text" formControlName="apelido" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Auditoria Diária">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Servidor</label>
+              <select formControlName="idServidor" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                @for (srv of servidores; track srv.idServidor) {
+                  <option [value]="srv.idServidor">{{ srv.nomeServidor }} (ID: {{ srv.idServidor }})</option>
+                }
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Tipo de Execução</label>
+              <select formControlName="tipoExecucao" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="QUERY">QUERY (Consulta)</option>
+                <option value="SCRIPT">SCRIPT (Comandos)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Instruções SQL (Separadas por ;) </label>
+            <textarea formControlName="conteudoSql" rows="4" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="SELECT * FROM usuarios;"></textarea>
+          </div>
+
+          <div class="flex items-center">
+            <button type="submit" [disabled]="sqlForm.invalid || loading" class="flex-1 bg-blue-600 text-white font-medium py-2 px-4 rounded-lg text-sm hover:bg-blue-700 transition-colors disabled:opacity-50">
+              {{ loading ? 'A executar...' : 'Disparar Execução SQL' }}
+            </button>
+            <button type="button" routerLink="/dashboard" class="ml-5 bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg text-sm hover:bg-gray-300 transition-colors">
+              Fechar
+            </button>
+          </div>
+        </form>
+      </section>
+</div>
