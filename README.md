@@ -1,4 +1,5 @@
 Fullstack Lab
+
 A Full-Stack Query Executor Management Application
 Fullstack Lab is a full-stack web application designed to demonstrate modern software development practices through a query executor management system built with Angular 22, Spring Boot 4, and PostgreSQL.
 
