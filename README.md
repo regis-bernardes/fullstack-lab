@@ -83,7 +83,6 @@ Make sure the following tools are installed:
 
 ```bash
 git clone https://github.com/regis-bernardes/fullstack-lab.git
-cd fullstack-lab
 ```
 
 ### 2. Start the infrastructure with Docker Compose
@@ -91,7 +90,7 @@ cd fullstack-lab
 Navigate to the backend directory:
 
 ```bash
-cd fullstack_lab/backend
+cd fullstack-lab/backend
 docker compose up -d
 docker ps -a
 ```
@@ -100,10 +99,10 @@ The containers should include services such as `postgres_controle` and `keycloak
 
 ### 3. Configure the database
 
-Connect to the PostgreSQL server started in the previous step and create the application database:
+Now, using terminal let´s create database:
 
 ```sql
-CREATE DATABASE fullstack_lab;
+docker exec -it postgres_controle createdb -U postgres fullstack_lab;
 ```
 
 The Spring Boot application's YAML configuration should contain the appropriate database connection settings. Configure the database credentials using environment variables before starting the backend.
@@ -115,7 +114,7 @@ The following steps describe an example local Keycloak configuration. Menu label
 #### Create a realm
 
 1. Open `http://localhost:8180` in your browser.
-2. Open the Keycloak Admin Console and sign in with your configured administrator credentials.
+2. Open the Keycloak Admin Console and sign in with your configured administrator credentials.(admin/admin)
 3. In the top-left corner, open the Realm dropdown, where `master` is displayed.
 4. Click **Create realm**.
 5. Set **Realm name** to `dbulinkedin-realm`.
@@ -129,11 +128,10 @@ The following steps describe an example local Keycloak configuration. Menu label
 3. Select **OpenID Connect** as the client type, if prompted.
 4. Set **Client ID** to `sql-client`.
 5. Click **Next**.
-6. Configure **Client authentication** and the authentication flows according to the application's implementation.
-7. Configure the valid redirect URIs, such as `http://localhost:4200/*`, if this matches the frontend configuration.
-8. Click **Save**.
-
-> **Security note:** A browser-based frontend is a public client and should not contain a client secret. Prefer Authorization Code Flow with PKCE. Enable Direct Access Grants only if the application specifically requires and securely supports that flow.
+6. Leave Client Authentication OFF, Authorization OFF, check Standard flow and Direct access grants.
+7. Click **Next**
+8. Configure the valid redirect URIs, such as `http://localhost:4200/*`, if this matches the frontend configuration.
+9. Click **Save**.
 
 #### Create a user
 
@@ -149,11 +147,9 @@ The following steps describe an example local Keycloak configuration. Menu label
 4. Click **Create**.
 5. Open the **Credentials** tab.
 6. Click **Set password**.
-7. Enter and confirm a password.
+7. Enter and confirm a password. For purpose of this project use [admin] as password.
 8. Set **Temporary** to **OFF** if the user should not be required to change the password at the first login.
 9. Save the changes and confirm if prompted.
-
-Use local development credentials only. Do not publish real passwords, client secrets, or tokens in the repository.
 
 #### Test the Keycloak configuration
 
@@ -201,6 +197,16 @@ mvnw.cmd spring-boot:run
 
 ### 6. Run the frontend
 
+From the Angular project directory, install dependencies for WebSockets:
+
+```bash
+npm install stompjs
+npm install --save-dev @types/stompjs
+
+npm install sockjs-client
+npm install --save-dev @types/sockjs-client
+```
+
 From the Angular project directory, install dependencies and start the development server:
 
 ```bash
@@ -218,7 +224,9 @@ Open the application in your browser:
 
 http://localhost:4200
 
-Adjust the commands and directory names to match the actual repository structure.
+If everything is properly configured, on first login, authenticate using Keycloak. After logging in, the following page will appear:
+
+<img width="1504" height="657" alt="image" src="https://github.com/user-attachments/assets/5b8860ea-696f-440f-9a4f-7fd437879bec" />
 
 ## 🧪 Testing
 
