@@ -1,3 +1,8 @@
+### GERAL ###
+./anotacoes.txt
+./CONVENTIONS.md
+./curls.txt
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
