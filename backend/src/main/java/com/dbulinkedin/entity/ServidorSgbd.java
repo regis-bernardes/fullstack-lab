@@ -40,6 +40,3 @@ public class ServidorSgbd {
     
     @Column(name = "database_name", nullable = false, length = 30)
     private String databaseName;
-
-    
-}
