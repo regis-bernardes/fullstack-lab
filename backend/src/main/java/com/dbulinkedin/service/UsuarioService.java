@@ -11,9 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Serviço para gerenciar operações relacionadas a usuários.
- */
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
