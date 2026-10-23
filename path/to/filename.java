@@ -1,8 +1,6 @@
 /**
- * Lista todos os usuários disponíveis no sistema.
- *
- * @return Lista de DTOs representando os usuários.
+ * @param tipo Tipo da entidade ServidorSgbd.
  */
-public List<UsuarioResponseDto> listarTodos() {
-    return repository.findAll().stream().map(this::toDto).collect(Collectors.toList());
+private String getTipo(ServidorSgbd entity) {
+    return entity.getTipo();
 }
