@@ -41,7 +41,6 @@ public class ServidorSgbd {
     @Column(name = "database_name", nullable = false, length = 30)
     private String databaseName;
 
-    
-    // Alteração: Corrigir variável e atributo
-    private String TipoSgbd;
+    @Enumerated(EnumType.STRING)
+    private TipoSgbd tipo; // POSTGRES, ORACLE, SQLSERVER
 }
