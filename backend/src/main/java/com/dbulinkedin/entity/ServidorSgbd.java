@@ -27,7 +27,7 @@ public class ServidorSgbd {
     private Integer porta;
 
     @Column(nullable = false, length = 20)
-    private String tipo; // POSTGRES, ORACLE, SQLSERVER
+    private String tipo; // POSTGRES, ORACLE, SQLSERVER, MYSQL
 
     @Column(nullable = false, length = 50)
     private String username;
