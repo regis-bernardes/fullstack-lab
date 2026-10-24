@@ -38,7 +38,7 @@ public class Execucao {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String conteudo;
     
-    @Enumerated(EnumType.ORDINAL) // Mapeia para o inteiro da tabela (1, 2, 3, 4)
+    @Enumerated(EnumType.STRING) // Mapeia para o inteiro da tabela (1, 2, 3, 4)
     @Column(nullable = false)
     private StatusExecucao status;
 

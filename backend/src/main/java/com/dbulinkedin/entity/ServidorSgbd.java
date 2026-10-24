@@ -1,5 +1,7 @@
 package com.dbulinkedin.entity;
 
+import com.dbulinkedin.enums.TipoSgbd;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,8 +28,9 @@ public class ServidorSgbd {
     @Column(nullable = false)
     private Integer porta;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String tipo; // POSTGRES, ORACLE, SQLSERVER
+    private TipoSgbd tipo; // POSTGRES, ORACLE, MYSQL
 
     @Column(nullable = false, length = 50)
     private String username;

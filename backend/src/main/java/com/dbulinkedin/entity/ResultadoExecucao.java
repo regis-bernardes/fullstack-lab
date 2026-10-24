@@ -60,7 +60,7 @@ public class ResultadoExecucao {
     @Column(name = "dt_fim")
     private LocalDateTime dtFim;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusExecucao status;
 

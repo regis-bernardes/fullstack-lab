@@ -1,5 +1,9 @@
 package com.dbulinkedin.dto;
 
+import com.dbulinkedin.enums.TipoSgbd;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -16,8 +20,9 @@ public class ServidorSgbdRequestDto {
     @NotNull(message = "A porta é obrigatória")
     private Integer porta;
 
-    @NotBlank(message = "O tipo de servidor é obrigatório (POSTGRES, ORACLE, SQLSERVER)")
-    private String tipo;
+    @NotNull(message = "O tipo de servidor é obrigatório (POSTGRES, ORACLE, MySql)")
+    @Enumerated(EnumType.STRING)
+    private TipoSgbd tipo;
 
     @NotBlank(message = "O username é obrigatório")
     private String username;

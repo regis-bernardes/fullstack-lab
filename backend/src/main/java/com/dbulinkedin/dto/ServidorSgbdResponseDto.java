@@ -1,5 +1,7 @@
 package com.dbulinkedin.dto;
 
+import com.dbulinkedin.enums.TipoSgbd;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +12,7 @@ public class ServidorSgbdResponseDto {
     private String nomeServidor;
     private String host;
     private Integer porta;
-    private String tipo;
+    private TipoSgbd tipo;
     private String username;
     private Boolean ativo;
     private String databaseName;

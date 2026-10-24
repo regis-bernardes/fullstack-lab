@@ -20,14 +20,23 @@ public class CriptografiaService {
         if (valorOriginal == null) {
             return null;
         }
+        
         try {
-            SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), ALGORITHM);
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
-            byte[] bytesCifrados = cipher.doFinal(valorOriginal.getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(bytesCifrados);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao criptografar o valor", e);
+        	Base64.getDecoder().decode(valorOriginal);
+        	return valorOriginal;
+        }
+        
+        catch (Exception ex) {
+	        try {
+	            SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), ALGORITHM);
+	            Cipher cipher = Cipher.getInstance(ALGORITHM);
+	            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+	            
+	            byte[] bytesCifrados = cipher.doFinal(valorOriginal.getBytes(StandardCharsets.UTF_8));
+	            return Base64.getEncoder().encodeToString(bytesCifrados);
+	        } catch (Exception e) {
+	            throw new RuntimeException("Erro ao criptografar o valor", e);
+	        }
         }
     }
 

@@ -16,6 +16,20 @@ services:
     networks:
       - network-sql-engine
 
+  # Servidor MySQL
+  mysql-server:
+    image: mysql:8.0
+    container_name: mysql_server
+    environment:
+      MYSQL_DATABASE: fullstack_lab
+      MYSQL_ROOT_PASSWORD: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - network-sql-engine
+
   # Keycloak para Autenticação e Gestão de Identidade
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.0
@@ -26,11 +40,15 @@ services:
     command: start-dev
     ports:
       - "8180:8080"
+    volumes:
+      - keycloak_data:/opt/keycloack/data
     networks:
       - network-sql-engine
 
 volumes:
   pgdata_controle:
+  mysql_data:
+  keycloak_data:
 
 networks:
   network-sql-engine:
